@@ -1,9 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'RMISC 2024' });
+  res.json({ message: 'Welcome to the RMISC 2024 API!' })
 });
 
 module.exports = router;

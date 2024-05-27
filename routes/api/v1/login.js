@@ -1,9 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'RMISC 2024' });
+  res.json({ message: 'Please POST username and password to get a jwt token' })
 });
 
 module.exports = router;
