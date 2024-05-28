@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+// set up rate limiter: maximum of five requests per minute
+const RateLimit = require('express-rate-limit');
 
 var indexRouter = require('./routes/index');
 const apiV1IndexRouter = require('./routes/api/v1/index');
@@ -23,6 +25,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+var limiter = RateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1, // max 100 requests per windowMs
+});
+
+// apply rate limiter to API routes
+app.use('/api', limiter);
 
 app.use('/', indexRouter);
 app.use('/api/v1/', apiV1IndexRouter);
