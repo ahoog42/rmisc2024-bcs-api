@@ -15,7 +15,10 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
+// let's add the username if present as a morgan token
+logger.token('username', function(req, res) { return req.user || 'anonymous' });
+
+app.use(logger(':remote-addr - :remote-user [:date[iso]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms :username'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
