@@ -11,11 +11,15 @@ router.get('/', function(req, res, next) {
 // for POST, accept a username and password. if they are not present, return a 400 status code
 // if they are present, return a signed jwt token with an issuer of 'rmisc2024' and an expiration of 24 hours
 router.post('/', function(req, res, next) {
-  if (req.body.username && req.body.password) {
-    const token = jwt.sign({ username: req.body.username }, process.env.jwtSecret , { expiresIn: '24h', issuer: 'rmisc2024' });
-    res.json({ token: token });
-  } else {
-    res.status(400).json({ message: 'Please provide a username and password' });
+  try {
+    if (req.body.username && req.body.password) {
+      const token = jwt.sign({ username: req.body.username }, process.env.jwtSecret , { expiresIn: '24h', issuer: 'rmisc2024' });
+      res.json({ token: token });
+    } else {
+      res.status(400).json({ message: 'Please provide a json document username and password' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
