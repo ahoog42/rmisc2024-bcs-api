@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  api:
+    image: rmisc2024-bcs-api:latest
+    container_name: rmisc2024-bcs-api
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./.env:/home/node/app/.env
+      - ./incidents.db:/home/node/app/incidents.db
+    restart: unless-stopped
