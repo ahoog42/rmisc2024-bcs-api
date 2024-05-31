@@ -13,6 +13,12 @@ const apiV1TenksRouter = require('./routes/api/v1/tenks');
 
 var app = express();
 
+// since we're using rate limiting in production, we need to trust the first proxy
+// https://express-rate-limit.mintlify.app/reference/error-codes#err-erl-unexpected-x-forwarded-for
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1); // trust first proxy
+};
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -27,8 +33,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var limiter = RateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1, // max 100 requests per windowMs
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // max 10 requests per windowMs
 });
 
 // apply rate limiter to API routes
@@ -46,6 +52,11 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    console.error(err);
+    return res.status(400).send({ status: 400, message: err.message }); // Bad request
+  };
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
