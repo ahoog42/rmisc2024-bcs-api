@@ -7,6 +7,7 @@ COPY . .
 
 FROM node AS final
 ENV NODE_ENV production
+LABEL org.opencontainers.image.source=https://github.com/ahoog42/rmisc2024-bcs-api
 RUN apt update && apt install -y \
 		&& rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
