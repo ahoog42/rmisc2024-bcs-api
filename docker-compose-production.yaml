@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  api:
+    image: ghcr.io/ahoog42/rmisc2024-bcs-api:latest
+    container_name: rmisc2024-bcs-api
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./.env:/home/node/app/.env
+      - /home/hiro/git/edgar-test/incidents.db:/home/node/app/incidents.db
+    networks:
+      - caddy
+      - fluentbit
+    labels:
+      caddy: rmisc2024.andrewhoog.com
+      caddy.reverse_proxy: "{{upstreams 3001}}"
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.rmisc2024-bcs-api
+    restart: unless-stopped
+
+networks:
+  caddy:
+    external: true
+  fluentbit:
+    external: true
